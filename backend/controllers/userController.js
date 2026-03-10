@@ -1,4 +1,5 @@
 import User from "../models/User.js";
+import { uploadToCloudinary } from "../config/cloudinary.js";
 
 // @desc    Get user profile
 // @route   GET /api/users/profile
@@ -43,15 +44,20 @@ export const updateUserProfile = async (req, res) => {
     user.name = req.body.name || user.name;
     user.bio = req.body.bio || user.bio;
 
-    // If a file was uploaded, use its path, otherwise check body for profilePic URL
-    if (req.file) {
-      user.profilePic = req.file.path;
-    } else {
-      user.profilePic = req.body.profilePic || user.profilePic;
-    }
+    try {
+      if (req.file) {
+        const result = await uploadToCloudinary(req.file.buffer);
+        user.profilePic = result.secure_url;
+      } else {
+        user.profilePic = req.body.profilePic || user.profilePic;
+      }
 
-    const updatedUser = await user.save();
-    res.json(updatedUser);
+      const updatedUser = await user.save();
+      res.json(updatedUser);
+    } catch (error) {
+      console.error("Cloudinary Upload Error:", error);
+      res.status(500).json({ message: "Error uploading image" });
+    }
   } else {
     res.status(404).json({ message: "User not found" });
   }

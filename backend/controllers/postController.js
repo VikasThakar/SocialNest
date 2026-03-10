@@ -1,4 +1,5 @@
 import Post from "../models/Post.js";
+import { uploadToCloudinary } from "../config/cloudinary.js";
 
 // @desc    Create a new post
 // @route   POST /api/posts
@@ -7,14 +8,16 @@ export const createPost = async (req, res) => {
   console.log("Create Post Hit:", req.body);
   console.log("File:", req.file);
   const { caption } = req.body;
-  const image = req.file ? req.file.path : null;
 
-  if (!image) {
+  if (!req.file) {
     console.log("Error: Image is missing");
     return res.status(400).json({ message: "Image is required" });
   }
 
   try {
+    const result = await uploadToCloudinary(req.file.buffer);
+    const image = result.secure_url;
+
     const post = await Post.create({
       user: req.user._id,
       caption,
