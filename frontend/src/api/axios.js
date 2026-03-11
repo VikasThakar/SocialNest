@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://socialnest-m6i5.onrender.com",
+  baseURL: "https://socialnest-1-ba.onrender.com",
 });
 
 API.interceptors.request.use((req) => {
