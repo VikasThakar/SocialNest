@@ -70,6 +70,40 @@ export const loginUser = async (req, res) => {
   }
 };
 
+// @desc    Guest Login
+// @route   POST /api/auth/guest-login
+// @access  Public
+export const guestLogin = async (req, res) => {
+  try {
+    let user = await User.findOne({ email: "guest@socialnest.com" });
+
+    if (!user) {
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash("guest12345", salt);
+
+      user = await User.create({
+        name: "Guest User",
+        username: "guest" + Math.floor(Math.random() * 10000),
+        email: "guest@socialnest.com",
+        password: hashedPassword,
+        bio: "I am a guest user exploring SocialNest!",
+      });
+    }
+
+    res.json({
+      _id: user._id,
+      name: user.name,
+      username: user.username,
+      email: user.email,
+      bio: user.bio,
+      profilePic: user.profilePic,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 // @desc    Get user profile
 // @route   GET /api/auth/me
 // @access  Private

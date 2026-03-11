@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
           const { data } = await API.get("/auth/me");
           setUser(data);
         } catch (error) {
+          console.error("Auth verification failed", error);
           localStorage.removeItem("token");
         }
       }
@@ -25,6 +26,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const { data } = await API.post("/auth/login", { email, password });
+    localStorage.setItem("token", data.token);
+    setUser(data);
+    return data;
+  };
+
+  const guestLogin = async () => {
+    const { data } = await API.post("/auth/guest-login");
     localStorage.setItem("token", data.token);
     setUser(data);
     return data;
@@ -49,7 +57,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ user, setUser, login, register, logout, loading }}
+      value={{ user, setUser, login, register, logout, guestLogin, loading }}
     >
       {children}
     </AuthContext.Provider>

@@ -6,8 +6,17 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login } = useAuth();
+  const { login, guestLogin } = useAuth();
   const navigate = useNavigate();
+
+  const handleGuestLogin = async () => {
+    try {
+      await guestLogin();
+      navigate("/");
+    } catch (err) {
+      setError(err.response?.data?.message || "Guest login failed");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -68,6 +77,22 @@ const Login = () => {
           className="w-full bg-blue-600 text-white p-4 rounded-2xl font-bold text-lg hover:bg-blue-700 transition-all transform active:scale-[0.98] shadow-lg shadow-blue-100"
         >
           Login
+        </button>
+
+        <div className="relative flex items-center py-2">
+          <div className="grow border-t border-gray-100"></div>
+          <span className="shrink-0 mx-4 text-gray-400 text-sm font-semibold">
+            Or
+          </span>
+          <div className="grow border-t border-gray-100"></div>
+        </div>
+
+        <button
+          type="button"
+          onClick={handleGuestLogin}
+          className="w-full bg-gray-50 text-gray-700 border border-gray-200 p-4 rounded-2xl font-bold text-lg hover:bg-gray-100 transition-all transform active:scale-[0.98] shadow-sm"
+        >
+          Continue as Guest
         </button>
       </form>
 
