@@ -2,14 +2,6 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
-import dns from "dns";
-
-try {
-  dns.setServers(["8.8.8.8", "8.8.4.4"]);
-  console.log("DNS Servers set to Google DNS");
-} catch (err) {
-  console.error("DNS setServers Error (ignoring):", err.message);
-}
 
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
